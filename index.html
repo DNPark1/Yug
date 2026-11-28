@@ -31,9 +31,9 @@
             <h2>Фильтры карты</h2>
             <label for="region">Регион</label
             ><select id="region"></select
-            ><label for="city">Город</label
+            ><label for="city">Населённый пункт</label
             ><select id="city"></select
-            ><small>При выборе города — радиус 25 км от центра.</small>
+            ><small>При выборе населённого пункта — радиус 25 км от центра.</small>
             <hr />
             <h3>Слои карты</h3>
             <div id="layers"></div>
@@ -63,6 +63,23 @@
           </div>
         </div>
       </section>
+      <article id="settlement" hidden aria-labelledby="settlement-title">
+        <div class="over">СПРАВКА О НАСЕЛЁННОМ ПУНКТЕ</div>
+        <h2 id="settlement-title"></h2>
+        <p id="settlement-about"></p>
+        <div class="profile-grid">
+          <section><h3>Дороги и подъезд</h3><div id="settlement-road"></div></section>
+          <section><h3>Среда и инфраструктура</h3><div id="settlement-environment"></div></section>
+          <section><h3>Турпоток</h3><div id="settlement-tourism"></div></section>
+          <section><h3>Что проверить для проекта</h3><div id="settlement-project"></div></section>
+        </div>
+        <details id="settlement-detail">
+          <summary>Покрытие улиц, парковки и сервисы в радиусе 1 км</summary>
+          <p>Выборка вокруг центра по отметкам участников OpenStreetMap. Числа показывают участки улиц и отмеченные объекты. Полнота карты различается.</p>
+          <button type="button" class="reset" id="settlement-load"></button>
+          <div id="settlement-observations" role="status"></div>
+        </details>
+      </article>
       <section class="below" id="analysis">
         <article>
           <div class="over">СПРОС</div>
@@ -144,6 +161,8 @@
     <script src="js/recreation.js"></script>
     <script src="js/boundaries.js"></script>
     <script src="js/map.js"></script>
+    <script src="js/settlement-data.js"></script>
+    <script src="js/settlement.js"></script>
     <script src="js/app.js"></script>
   </body>
 </html>

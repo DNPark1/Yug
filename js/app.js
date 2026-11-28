@@ -139,6 +139,7 @@ function render(zoom = true) {
   const active = new Set(
     [...document.querySelectorAll("#layers input:checked")].map((x) => x.value),
   );
+  showSettlement(r, city, nearby);
   const visible = nearby.filter((p) => active.has(p.type));
   el("mapname").textContent = city?.name || r?.name || "Все регионы";
   el("count").textContent =
@@ -197,10 +198,7 @@ function render(zoom = true) {
       .join("") +
     '<p class="note">' +
     region.note +
-    "</p>" +
-    (city
-      ? '<p class="note">Отдельной оценки для города в исходных данных нет.</p>'
-      : "")
+    "</p>"
   ).join("");
 }
 regionSelect.onchange = () => {
