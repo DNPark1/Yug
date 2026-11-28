@@ -171,6 +171,9 @@ function createMap() {
       },
     ],
   };
+  const [west, south, east, north] = GEOGRAPHY.land.bbox;
+  const overviewBounds = [[west, south], [east, north]];
+  const detailBounds = [[28, 39], [55, 54]];
   let instance;
   try {
     instance = new maplibregl.Map({
@@ -180,10 +183,7 @@ function createMap() {
       zoom: 6,
       minZoom: 4,
       maxZoom: 19,
-      maxBounds: [
-        [28, 39],
-        [55, 54],
-      ],
+      maxBounds: overviewBounds,
       scrollZoom: true,
       dragRotate: false,
       pitchWithRotate: false,
@@ -217,8 +217,14 @@ function createMap() {
     new maplibregl.AttributionControl({
       customAttribution:
         'Natural Earth · <a href="https://openfreemap.org/" target="_blank" rel="noopener">OpenFreeMap</a> · <a href="https://openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a> · <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a>',
-      compact: true,
+      compact: false,
     }),
+  );
+  const footer = document.querySelector(".mapfoot");
+  const controls = instance.getContainer();
+  footer.append(
+    controls.querySelector(".maplibregl-ctrl-scale"),
+    controls.querySelector(".maplibregl-ctrl-attrib"),
   );
   const toggle = document.getElementById("recreation-toggle");
   function updateRecreation() {
@@ -264,9 +270,11 @@ function createMap() {
       detailedMap = true;
       refreshLabels();
       instance.setStyle(detail, { diff: false });
+      instance.setMaxBounds(detailBounds);
       instance.on("error", () => {
         if (!detailedMap) return;
         detailedMap = false;
+        instance.setMaxBounds(overviewBounds);
         instance.setStyle(style, { diff: false });
         refreshLabels();
         document.getElementById("map-source").textContent =
@@ -341,6 +349,8 @@ function cityBoundary(city) {
 
 function updateMapView(city, regionPoints, zoom) {
   if (!map) return;
+  // Фильтры меняют высоту карточки после создания карты.
+  map.resize();
   openPopup?.remove();
   for (const marker of placeMarkers.splice(0)) marker.remove();
   const ring = city && cityBoundary(city);

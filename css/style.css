@@ -496,3 +496,19 @@ input:focus-visible {
 #settlement details { border-top: 1px solid #d3d8ca; padding-top: 12px; }
 #settlement button { margin: 8px 0; }
 @media (max-width: 700px) { .profile-grid { grid-template-columns: 1fr; } }
+
+.mapfoot {
+  flex-wrap: wrap;
+  padding: 4px 10px;
+  gap: 2px 8px;
+}
+.mapfoot small { margin: 0; }
+.mapfoot .maplibregl-ctrl { margin: 0; float: none; }
+.mapfoot .maplibregl-ctrl-scale { background: transparent; }
+.mapfoot .maplibregl-ctrl-attrib {
+  margin-left: auto;
+  padding: 0;
+  background: transparent;
+  font-size: 11px;
+  line-height: 1.3;
+}
