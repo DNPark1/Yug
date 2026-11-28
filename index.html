@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f6f5ee" />
+    <title>Юглокус — туристический атлас</title>
+    <link rel="stylesheet" href="vendor/maplibre-gl.css" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header>
+      <div class="wrap bar">
+        <a class="brand" href="#atlas"><b class="logo">◩</b> Юглокус</a
+        ><span class="strap">Туристический атлас</span>
+        <nav>
+          <a href="#atlas">Карта</a><a href="#analysis">Анализ проекта</a>
+        </nav>
+      </div>
+    </header>
+    <main class="wrap">
+      <section id="atlas">
+        <div class="over">ЮГ РОССИИ <i></i> ГЕОАТЛАС</div>
+        <h1>Юглокус</h1>
+        <p class="intro">
+          Изучайте турпоток, инфраструктуру и природные ограничения перед
+          выбором локации.
+        </p>
+        <div class="dashboard">
+          <aside>
+            <h2>Фильтры карты</h2>
+            <label for="region">Регион</label
+            ><select id="region"></select
+            ><label for="city">Город</label
+            ><select id="city"></select
+            ><small>При выборе города — радиус 25 км от центра.</small>
+            <hr />
+            <h3>Слои карты</h3>
+            <div id="layers"></div>
+            <label class="layer"
+              ><span class="park-outline" aria-hidden="true"></span>Парки и зоны
+              отдыха<input id="recreation-toggle" type="checkbox" checked
+            /></label>
+            <button class="reset" id="reset">↺ &nbsp; Сбросить фильтры</button>
+          </aside>
+          <div class="mapcard">
+            <div class="maptitle">
+              <div>
+                <span class="over">КАРТА МЕСТНОСТИ</span>
+                <h2 id="mapname"></h2>
+              </div>
+              <span class="north">↑ N</span>
+            </div>
+            <div
+              id="map"
+              aria-label="Интерактивная карта туристических объектов"
+            ></div>
+            <div class="mapfoot">
+              <span class="live"></span
+              ><small id="map-source">Обзорная карта</small
+              ><span id="count" aria-live="polite"></span>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="below" id="analysis">
+        <article>
+          <div class="over">СПРОС</div>
+          <h2>Турпоток региона</h2>
+          <div id="traffic"></div>
+        </article>
+        <article>
+          <div class="over">ИНФРАСТРУКТУРА</div>
+          <h2>Объекты на карте</h2>
+          <p class="note">
+            Каталог включает объекты, нанесённые в OpenStreetMap. Выгрузки за
+            17–27 ноября 2026 года.
+            <a
+              href="https://www.openstreetmap.org/copyright"
+              target="_blank"
+              rel="noopener"
+              >© OpenStreetMap contributors · ODbL</a
+            >
+          </p>
+          <label for="catalog-query">Поиск в выбранной зоне</label
+          ><input
+            type="search"
+            id="catalog-query"
+            placeholder="Название или адрес"
+          />
+          <div id="catalog"></div>
+        </article>
+      </section>
+      <section class="calc">
+        <div>
+          <div class="over">ЭКОНОМИКА ПРОЕКТА</div>
+          <h2>Порог безубыточности</h2>
+          <p>
+            Сколько оплаченных ночей или заказов в месяц покроют ваши расходы?
+            Введите показатели одного проекта.
+          </p>
+        </div>
+        <form id="calculator">
+          <label
+            >Цена заказа, ₽<input
+              id="price"
+              type="number"
+              min="0"
+              step="any"
+              placeholder="5 000" /></label
+          ><label
+            >Затраты на заказ, ₽<input
+              id="cost"
+              type="number"
+              min="0"
+              step="any"
+              placeholder="1 500" /></label
+          ><label
+            >Постоянные расходы в месяц, ₽<input
+              id="fixed"
+              type="number"
+              min="0"
+              step="any"
+              placeholder="210 000" /></label
+          ><output id="result" aria-live="polite"
+            >Введите три суммы для расчёта.</output
+          >
+        </form>
+      </section>
+      <footer>
+        Юглокус · Туристический атлас
+        <span
+          >Региональные оценки из Test.zip · Карта · Natural Earth и
+          OpenStreetMap</span
+        >
+      </footer>
+    </main>
+    <script src="vendor/maplibre-gl.js"></script>
+    <script src="js/geography.js"></script>
+    <script src="js/regions.js"></script>
+    <script src="js/osm-places.js"></script>
+    <script src="js/places.js"></script>
+    <script src="js/landscape.js"></script>
+    <script src="js/recreation.js"></script>
+    <script src="js/boundaries.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
