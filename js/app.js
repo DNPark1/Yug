@@ -17,6 +17,7 @@ const icon = (key, pin = false) =>
   "</span>";
 const regionSelect = el("region");
 const citySelect = el("city");
+regionSelect.add(new Option("Все регионы", ""));
 REGIONS.forEach((r) => regionSelect.add(new Option(r.name, r.id)));
 for (const [key, [title]] of Object.entries(kinds)) {
   el("layers").insertAdjacentHTML(
@@ -30,7 +31,9 @@ for (const [key, [title]] of Object.entries(kinds)) {
   );
 }
 function updateCities() {
-  citySelect.replaceChildren(new Option("Весь регион", ""));
+  citySelect.disabled = !regionSelect.value;
+  citySelect.replaceChildren(new Option(regionSelect.value ? "Весь регион" : "Все населённые пункты", ""));
+  if (!regionSelect.value) return;
   CITIES[regionSelect.value].forEach(({ name }) =>
     citySelect.add(new Option(name, name)),
   );
@@ -111,17 +114,18 @@ function drawCatalog() {
 el("catalog-query").oninput = drawCatalog;
 function render(zoom = true) {
   const r = REGIONS.find((x) => x.id === regionSelect.value);
-  const city = CITIES[r.id].find((city) => city.name === citySelect.value);
+  const cities = r ? CITIES[r.id] : Object.values(CITIES).flat();
+  const city = cities.find((city) => city.name === citySelect.value);
   const center = city && new maplibregl.LngLat(city.lng, city.lat);
   const parks = OOPT.filter(
     (p) =>
-      p.region.includes(r.name) ||
+      !r || p.region.includes(r.name) ||
       (r.id === "adygea" && p.region.includes("Адыгея")),
   ).map((p) => ({ ...p, type: "park" }));
   const candidates = [
-    ...PLACES.filter((p) => p.region === r.id),
+    ...PLACES.filter((p) => !r || p.region === r.id),
     ...parks,
-    ...OSM_PLACES.filter((p) => p.region === r.id),
+    ...OSM_PLACES.filter((p) => !r || p.region === r.id),
   ];
   const regional = candidates.filter(
     (p) => Number.isFinite(p.lat) && Number.isFinite(p.lng),
@@ -136,7 +140,7 @@ function render(zoom = true) {
     [...document.querySelectorAll("#layers input:checked")].map((x) => x.value),
   );
   const visible = nearby.filter((p) => active.has(p.type));
-  el("mapname").textContent = city ? city.name : r.name;
+  el("mapname").textContent = city?.name || r?.name || "Все регионы";
   el("count").textContent =
     "Точек на карте: " +
     visible.length +
@@ -147,7 +151,7 @@ function render(zoom = true) {
   const list = document.createElement("div");
   list.id = "catalog-list";
   el("catalog").append(list);
-  updateMapView(city, [...regional, ...CITIES[r.id]], zoom);
+  updateMapView(city, [...regional, ...cities], zoom);
   filteredPlaces = visible;
   drawPlaceGroups();
   catalogPlaces = visible;
@@ -159,7 +163,7 @@ function render(zoom = true) {
       : "В подборке нет точек в этой зоне.";
   if (!city) {
     for (const place of candidates.filter(
-      (p) => !regional.includes(p) && active.has(p.type),
+      (p) => (!Number.isFinite(p.lat) || !Number.isFinite(p.lng)) && active.has(p.type),
     )) {
       const pending = document.createElement("p");
       pending.className = "note";
@@ -171,13 +175,13 @@ function render(zoom = true) {
     "beforeend",
     '<p class="note">В карточке указано, к чему относятся координаты. Зелёный контур показывает парки, сады и зоны отдыха по OpenStreetMap. Для проверки участка нужны официальные границы и режим охраны.</p>',
   );
-  el("traffic").innerHTML =
+  el("traffic").innerHTML = (r ? [r] : REGIONS).map((region) =>
     "<small>" +
-    r.name +
+    region.name +
     " · " +
-    r.period +
+    region.period +
     " год</small>" +
-    r.estimates
+    region.estimates
       .map(
         (e) =>
           '<div class="stats"><div><b>' +
@@ -192,11 +196,12 @@ function render(zoom = true) {
       )
       .join("") +
     '<p class="note">' +
-    r.note +
+    region.note +
     "</p>" +
     (city
       ? '<p class="note">Отдельной оценки для города в исходных данных нет.</p>'
-      : "");
+      : "")
+  ).join("");
 }
 regionSelect.onchange = () => {
   updateCities();
