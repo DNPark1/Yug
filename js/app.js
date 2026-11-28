@@ -215,28 +215,5 @@ el("reset").onclick = () => {
   updateCities();
   render();
 };
-// Постоянные расходы делим на доход с заказа после переменных затрат.
-function calculate() {
-  const inputs = ["price", "cost", "fixed"].map(el);
-  const [price, cost, fixed] = inputs.map((i) => i.valueAsNumber);
-  let result = "Введите три суммы для расчёта.";
-  if (inputs.some((i) => !i.validity.valid))
-    result = "Укажите неотрицательные суммы.";
-  else if ([price, cost, fixed].every(Number.isFinite)) {
-    if (price > cost)
-      result =
-        "Заказов в месяц для покрытия затрат: " +
-        number(Math.ceil(fixed / (price - cost))) +
-        ".";
-    else
-      result =
-        fixed === 0
-          ? "При нуле заказов расходы покрыты."
-          : "При такой цене заказы не покроют постоянные расходы.";
-  }
-  el("result").textContent = result;
-}
-el("calculator").oninput = calculate;
-el("calculator").onsubmit = (e) => e.preventDefault();
 updateCities();
 render();
